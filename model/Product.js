@@ -4,7 +4,8 @@ import { Schema } from 'mongoose';
 const productSchema = new Schema({
     title: {
         type: String, 
-        required: true
+        required: true,
+        unique:true
     },
     description: {
         type: String,
@@ -13,7 +14,7 @@ const productSchema = new Schema({
     price: {
         type: Number,
         min: [1, 'wrong min price'],
-        max: [1000, 'wrong max price']
+        max: [99999999, 'wrong max price']
     },
     discountPercentage: {
         type: Number,
@@ -53,6 +54,17 @@ const productSchema = new Schema({
     }
 });
 
-const Product = mongoose.model('Product', productSchema);
 
-export { Product };  // Use export instead of exports
+const virtual = productSchema.virtual('id');
+virtual.get(function () {
+    return this._id.toHexString();
+});
+productSchema.set('toJSON', {
+    virtuals: true,
+    versionKey: false,
+    transform: function (doc, ret) {
+        delete ret._id;
+    }
+});
+const Product = mongoose.model('Product', productSchema);
+export { Product }; 

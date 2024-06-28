@@ -1,13 +1,14 @@
 import express from 'express'
-import { config } from 'dotenv';
+import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import { createProduct } from './controller/Product.js'
+import productsRouter from './routes/Products.js'
 
-config();
+dotenv.config();
 const app = express(); 
+
 // Middleware
 app.use(express.json());
-
+app.use('/products',productsRouter)
 
 
 const dbConnection = async () => {
@@ -16,15 +17,9 @@ const dbConnection = async () => {
 }
 dbConnection().catch(err => console.log(err))
 
-
-
 app.get("/" , (req , res) => {
     res.json({status:'Success'})
 })
-
-app.post("/products" , createProduct)
-
-
 
 
 const port = process.env.PORT || 3000
